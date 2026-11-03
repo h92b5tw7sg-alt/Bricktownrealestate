@@ -1,0 +1,82 @@
+export type ListingType = "sale" | "lease" | "sale_or_lease";
+export type Status = "available" | "coming_soon" | "under_contract" | "leased" | "sold";
+export type PropertyType = "building" | "space" | "land" | "parking";
+export type MediaKind = "photo" | "rendering" | "floor_plan" | "brochure" | "video";
+
+export type Property = {
+  id: string;
+  slug: string;
+  prop_code: string | null;
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string | null;
+  property_type: PropertyType;
+  listing_type: ListingType;
+  status: Status;
+  published: boolean;
+  sqft: number | null;
+  acreage: number | null;
+  floors: number | null;
+  year_built: number | null;
+  zoning: string | null;
+  price_display: string | null;
+  headline: string | null;
+  description: string | null;
+  highlights: string[];
+  hero_url: string | null;
+  sort: number;
+};
+
+export type Media = {
+  id: string;
+  property_id: string;
+  kind: MediaKind;
+  url: string;
+  storage_path: string | null;
+  caption: string | null;
+  sort: number;
+};
+
+export const LISTING_LABEL: Record<ListingType, string> = {
+  sale: "For Sale",
+  lease: "For Lease",
+  sale_or_lease: "For Sale or Lease",
+};
+
+export const STATUS_LABEL: Record<Status, string> = {
+  available: "Available",
+  coming_soon: "Coming Soon",
+  under_contract: "Under Contract",
+  leased: "Leased",
+  sold: "Sold",
+};
+
+export const TYPE_LABEL: Record<PropertyType, string> = {
+  building: "Building",
+  space: "Space",
+  land: "Land / Lot",
+  parking: "Parking",
+};
+
+export const KIND_LABEL: Record<MediaKind, string> = {
+  photo: "Photos",
+  rendering: "Renderings",
+  floor_plan: "Floor Plans",
+  brochure: "Brochures",
+  video: "Video",
+};
+
+export function sizeLine(p: Pick<Property, "sqft" | "acreage">) {
+  const parts: string[] = [];
+  if (p.sqft) parts.push(`${Number(p.sqft).toLocaleString()} SF`);
+  if (p.acreage) parts.push(`${Number(p.acreage).toLocaleString(undefined, { maximumFractionDigits: 2 })} AC`);
+  return parts.join(" · ");
+}
+
+export const fullAddress = (p: Pick<Property, "address" | "city" | "state" | "zip">) =>
+  `${p.address}, ${p.city}, ${p.state}${p.zip ? " " + p.zip : ""}`;
+
+export const mapsUrl = (p: Pick<Property, "address" | "city" | "state" | "zip">) =>
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress(p))}`;
