@@ -15,7 +15,7 @@ insert into properties (prop_code, slug, name, address, zip, property_type, list
 ('PROP-006', '311-e-sheridan', '311 E Sheridan', '311 E Sheridan Ave', '73104', 'building', 'sale_or_lease', 'available', false, 7000, null, null, null, null, null, '{}', 60),
 ('PROP-011', '201-e-sheridan', '201 E Sheridan', '201 E Sheridan Ave', '73104', 'building', 'sale_or_lease', 'available', false, 2772, null, null, null, null, null, '{}', 70),
 ('PROP-012', '104-e-california', '104 E California', '104 E California Ave', '73104', 'building', 'sale_or_lease', 'available', false, null, null, null, null, null, null, '{}', 80),
-('PROP-007', 'bricktown-events-center', 'Bricktown Events Center', '413 Kings of Leon Ln', '73104', 'building', 'sale_or_lease', 'available', false, null, 0.8581, null, null, null, null, '{}', 90),
+('PROP-007', 'bricktown-events-center', 'Bricktown Events Center', '425 Kings of Leon Ln', '73104', 'building', 'sale_or_lease', 'available', false, null, 0.8581, null, null, null, null, '{}', 90),
 ('PROP-008', '1120-s-mckinley', '1120 S McKinley', '1120 S McKinley Ave', null, 'building', 'sale', 'available', false, 16256, null, null, null, null, null, '{}', 100),
 ('PROP-009', '1-e-reno', '1 E Reno', '1 E Reno Ave', null, 'building', 'sale_or_lease', 'available', false, 19880, null, null, null, null, null, '{}', 110),
 ('PROP-010', 'parking-lot', 'Parking Lot', 'Parking lot — address TBD', null, 'parking', 'sale_or_lease', 'available', false, 7000, null, null, null, null, null, '{}', 120)
