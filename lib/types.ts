@@ -1,7 +1,7 @@
 export type ListingType = "sale" | "lease" | "sale_or_lease";
 export type Status = "available" | "coming_soon" | "under_contract" | "leased" | "sold";
 export type PropertyType = "building" | "space" | "land" | "parking";
-export type MediaKind = "photo" | "rendering" | "floor_plan" | "brochure" | "video";
+export type MediaKind = "photo" | "rendering" | "floor_plan" | "brochure" | "video" | "before" | "tour";
 
 export type Property = {
   id: string;
@@ -26,6 +26,8 @@ export type Property = {
   description: string | null;
   highlights: string[];
   hero_url: string | null;
+  lat: number | null;
+  lng: number | null;
   sort: number;
 };
 
@@ -66,6 +68,8 @@ export const KIND_LABEL: Record<MediaKind, string> = {
   floor_plan: "Floor Plans",
   brochure: "Brochures",
   video: "Video",
+  before: "Today (compare slider)",
+  tour: "3D / 360 Tours",
 };
 
 export function sizeLine(p: Pick<Property, "sqft" | "acreage">) {
@@ -80,3 +84,22 @@ export const fullAddress = (p: Pick<Property, "address" | "city" | "state" | "zi
 
 export const mapsUrl = (p: Pick<Property, "address" | "city" | "state" | "zip">) =>
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress(p))}`;
+
+/** Turns a tour/video link into an embeddable URL. Only known hosts are embedded. */
+export function embedUrl(url: string): string | null {
+  let u: URL;
+  try { u = new URL(url); } catch { return null; }
+  if (u.protocol !== "https:") return null;
+  const h = u.hostname.replace(/^www\./, "");
+  const yt = url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
+  if (yt && /youtu/.test(h)) return `https://www.youtube.com/embed/${yt[1]}`;
+  const vm = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (vm) return `https://player.vimeo.com/video/${vm[1]}`;
+  if (h.endsWith("matterport.com")) {
+    const m = u.searchParams.get("m");
+    return m ? `https://my.matterport.com/show/?m=${encodeURIComponent(m)}&play=1` : url;
+  }
+  if (["kuula.co", "cloudpano.com", "app.cloudpano.com", "momento360.com", "tour.giraffe360.com", "my.matterport.com"].some((d) => h === d || h.endsWith("." + d))) return url;
+  if (h === "google.com" && u.pathname.startsWith("/maps/embed")) return url;
+  return null;
+}

@@ -7,6 +7,7 @@ export default function AdminNav() {
       <Link href="/admin">Properties</Link>
       <Link href="/admin/inquiries">Inquiries</Link>
       <Link href="/admin/signs">Signs &amp; QR codes</Link>
+      <Link href="/admin/site">Homepage</Link>
       <Link href="/" target="_blank">View site ↗</Link>
       <form action={logout} style={{ marginLeft: "auto" }}><button className="btn sm ghost">Log out</button></form>
     </nav>

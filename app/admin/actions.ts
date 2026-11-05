@@ -7,6 +7,7 @@ import { endSession, requireAdmin } from "@/lib/auth";
 const BUCKET = "property-media";
 const s = (v: FormDataEntryValue | null) => String(v ?? "").trim();
 const n = (v: FormDataEntryValue | null) => { const t = s(v).replace(/[,\s]/g, ""); return t === "" || isNaN(Number(t)) ? null : Number(t); };
+const KINDS = ["photo", "rendering", "floor_plan", "brochure", "video", "before", "tour"];
 const slugify = (t: string) => t.toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
 
 function refresh(slug?: string) {
@@ -58,6 +59,8 @@ export async function saveProperty(form: FormData) {
     description: s(form.get("description")) || null,
     highlights: s(form.get("highlights")).split("\n").map((x) => x.trim()).filter(Boolean),
     sort: n(form.get("sort")) ?? 100,
+    lat: n(form.get("lat")),
+    lng: n(form.get("lng")),
   };
   const { error } = await db().from("properties").update(row).eq("id", id);
   if (error) redirect(`/admin/p/${id}?e=${encodeURIComponent(error.code === "23505" ? "That web address (slug) is already used." : error.message)}`);
@@ -88,7 +91,7 @@ export async function deleteProperty(form: FormData) {
 export async function uploadMedia(form: FormData) {
   await requireAdmin();
   const id = s(form.get("id"));
-  const kind = s(form.get("kind"));
+  const kind = KINDS.includes(s(form.get("kind"))) ? s(form.get("kind")) : "photo";
   const caption = s(form.get("caption")) || null;
   const files = form.getAll("files").filter((f): f is File => f instanceof File && f.size > 0);
   const link = s(form.get("link"));
@@ -133,4 +136,30 @@ export async function markInquiry(form: FormData) {
   await requireAdmin();
   await db().from("inquiries").update({ handled: form.get("handled") === "1" }).eq("id", s(form.get("id")));
   revalidatePath("/admin/inquiries");
+}
+
+const SETTING_KEYS = ["hero_video_url", "hero_image_url", "hero_headline", "hero_subhead"];
+
+export async function saveSettings(form: FormData) {
+  await requireAdmin();
+  const rows: { key: string; value: string | null; updated_at: string }[] = [];
+  for (const key of ["hero_headline", "hero_subhead"]) rows.push({ key, value: s(form.get(key)) || null, updated_at: new Date().toISOString() });
+  for (const key of ["hero_video_url", "hero_image_url"]) {
+    const file = form.get(`${key}_file`);
+    const link = s(form.get(key));
+    let value: string | null = link || null;
+    if (file instanceof File && file.size > 0) {
+      const ext = (file.name.split(".").pop() || "bin").toLowerCase().replace(/[^a-z0-9]/g, "");
+      const path = `_site/${key}-${Date.now()}.${ext}`;
+      const { error } = await db().storage.from(BUCKET).upload(path, Buffer.from(await file.arrayBuffer()), { contentType: file.type || undefined });
+      if (error) redirect(`/admin/site?e=${encodeURIComponent("Upload failed: " + error.message)}`);
+      value = db().storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+    }
+    if (form.get(`${key}_clear`) === "on") value = null;
+    rows.push({ key, value, updated_at: new Date().toISOString() });
+  }
+  const { error } = await db().from("site_settings").upsert(rows.filter((r) => SETTING_KEYS.includes(r.key)));
+  if (error) redirect(`/admin/site?e=${encodeURIComponent(error.message)}`);
+  revalidatePath("/");
+  redirect("/admin/site?saved=1");
 }

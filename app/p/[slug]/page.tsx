@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Gallery from "@/components/Gallery";
 import InquiryForm from "@/components/InquiryForm";
+import CompareSlider from "@/components/CompareSlider";
+import DistrictMap from "@/components/DistrictMap";
 import { mediaFor, propertyBySlug } from "@/lib/data";
 import { isAdmin } from "@/lib/auth";
 import { contact, siteUrl, telHref } from "@/lib/site";
-import { LISTING_LABEL, STATUS_LABEL, TYPE_LABEL, fullAddress, mapsUrl, type Media } from "@/lib/types";
+import { LISTING_LABEL, STATUS_LABEL, TYPE_LABEL, embedUrl, fullAddress, mapsUrl, sizeLine, type Media } from "@/lib/types";
 
 export const revalidate = 60;
 
@@ -26,14 +28,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-function youtubeEmbed(url: string) {
-  const m = url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
-  if (m) return `https://www.youtube.com/embed/${m[1]}`;
-  const v = url.match(/vimeo\.com\/(\d+)/);
-  if (v) return `https://player.vimeo.com/video/${v[1]}`;
-  return null;
-}
-
 export default async function PropertyPage({ params, searchParams }: Props) {
   const { slug } = await params;
   const { src } = await searchParams;
@@ -46,6 +40,9 @@ export default async function PropertyPage({ params, searchParams }: Props) {
   const plans = by("floor_plan");
   const docs = by("brochure");
   const videos = by("video");
+  const tours = by("tour");
+  const before = by("before")[0];
+  const rendering = by("rendering")[0];
   const c = contact();
   const fromSign = src === "qr";
   const label = p.name !== p.address ? `${p.name} — ${p.address}` : p.address;
@@ -86,16 +83,36 @@ export default async function PropertyPage({ params, searchParams }: Props) {
         </aside>
       </div>
 
+      {before && rendering && (
+        <section data-reveal>
+          <div className="eyebrow">Before &amp; after</div>
+          <h2>Today vs. the vision</h2>
+          <p className="muted">Drag the handle to compare.</p>
+          <CompareSlider before={before.url} after={rendering.url} beforeLabel={before.caption || "Today"} afterLabel={rendering.caption || "Rendering"} />
+        </section>
+      )}
+
       {(p.headline || p.description || p.highlights.length > 0) && (
-        <section className="card">
+        <section className="card" data-reveal>
           {p.headline && <h2>{p.headline}</h2>}
           {p.description && p.description.split(/\n{2,}/).map((para, i) => <p key={i}>{para}</p>)}
           {p.highlights.length > 0 && <ul className="highlights">{p.highlights.map((h) => <li key={h}>{h}</li>)}</ul>}
         </section>
       )}
 
+      {tours.map((v) => {
+        const e = embedUrl(v.url);
+        return e ? (
+          <section key={v.id} data-reveal>
+            <div className="eyebrow">Walk through it</div>
+            <h2>{v.caption || "3D tour"}</h2>
+            <iframe className="tour" src={e} title={v.caption || "3D tour"} allow="fullscreen; xr-spatial-tracking; gyroscope; accelerometer" allowFullScreen loading="lazy" />
+          </section>
+        ) : null;
+      })}
+
       {plans.length > 0 && (
-        <section>
+        <section data-reveal>
           <h2>Floor plans</h2>
           <div className="plans">
             {plans.map((m) => (
@@ -111,18 +128,27 @@ export default async function PropertyPage({ params, searchParams }: Props) {
       )}
 
       {videos.map((v) => {
-        const e = youtubeEmbed(v.url);
-        return e ? <iframe key={v.id} className="video" src={e} title={v.caption || "Property video"} allowFullScreen /> : null;
+        const e = embedUrl(v.url);
+        return e ? <iframe key={v.id} className="video" src={e} title={v.caption || "Property video"} allowFullScreen loading="lazy" data-reveal /> : null;
       })}
 
       {docs.length > 0 && (
-        <section className="docs">
+        <section className="docs" data-reveal>
           <h2>Brochures &amp; documents</h2>
           {docs.map((d) => <a key={d.id} href={d.url} target="_blank" rel="noopener">↓ {d.caption || "Download brochure"}</a>)}
         </section>
       )}
 
-      <section className="card" style={{ maxWidth: 720 }}>
+      {p.lat && p.lng && (
+        <section data-reveal>
+          <div className="eyebrow">Location</div>
+          <h2>{fullAddress(p)}</h2>
+          <DistrictMap pins={[{ id: p.id, lat: p.lat, lng: p.lng, label: "★", title: p.name !== p.address ? p.name : p.address, sub: sizeLine(p) }]} height={360} zoom={17} />
+          <p className="small"><a href={mapsUrl(p)} target="_blank" rel="noopener">Open in Google Maps →</a></p>
+        </section>
+      )}
+
+      <section className="card" style={{ maxWidth: 720 }} data-reveal>
         <h2>Get details or schedule a tour</h2>
         <p className="muted">Tell us a little about your plans and we&apos;ll follow up — usually same day.</p>
         <InquiryForm propertyId={p.id} label={label} source={fromSign ? "qr" : "web"} defaultInterest={p.listing_type === "sale" ? "buy" : p.listing_type === "lease" ? "lease" : "info"} />

@@ -6,6 +6,8 @@ import "@fontsource/inter/600.css";
 import "@fontsource/inter/700.css";
 import "@fontsource/inter/800.css";
 import "./globals.css";
+import { Suspense } from "react";
+import RevealObserver from "@/components/RevealObserver";
 import { BRAND, contact, siteUrl, telHref } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -45,6 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
           <div style={{ marginTop: 10 }}><Link href="/admin" style={{ color: "#8f837c", fontSize: ".8rem" }}>Owner login</Link></div>
         </footer>
+        <Suspense fallback={null}><RevealObserver /></Suspense>
       </body>
     </html>
   );

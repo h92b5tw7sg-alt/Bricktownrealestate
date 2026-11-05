@@ -6,10 +6,11 @@ import { mediaFor } from "@/lib/data";
 import { KIND_LABEL, LISTING_LABEL, STATUS_LABEL, TYPE_LABEL, type MediaKind, type Property } from "@/lib/types";
 import AdminNav from "../../AdminNav";
 import { deleteProperty, saveProperty, updateMedia, uploadMedia } from "../../actions";
+import PinPicker from "./PinPicker";
 
 export const dynamic = "force-dynamic";
 
-const KINDS: MediaKind[] = ["rendering", "photo", "floor_plan", "brochure", "video"];
+const KINDS: MediaKind[] = ["rendering", "before", "photo", "floor_plan", "tour", "brochure", "video"];
 const isImg = (u: string) => /\.(png|jpe?g|webp|gif|avif)(\?|$)/i.test(u);
 
 export default async function EditProperty({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ saved?: string; e?: string }> }) {
@@ -69,6 +70,7 @@ export default async function EditProperty({ params, searchParams }: { params: P
           <div><label>Web address</label><input name="slug" defaultValue={p.slug} /><div className="small muted">bricktownrealco.com/p/{p.slug} — changing this breaks QR codes already printed.</div></div>
           <div><label>Sort order <span className="muted">(lower = first)</span></label><input name="sort" inputMode="numeric" defaultValue={p.sort} /></div>
         </div>
+        <div className="field"><label>Map pin</label><PinPicker lat={p.lat} lng={p.lng} /></div>
         <button className="btn" style={{ marginTop: 16 }}>Save</button>
       </form>
 
@@ -78,7 +80,7 @@ export default async function EditProperty({ params, searchParams }: { params: P
           <input type="hidden" name="id" value={p.id} />
           <div style={{ flex: "1 1 150px" }}><label>Type</label><select name="kind" defaultValue="rendering">{KINDS.map((k) => <option key={k} value={k}>{KIND_LABEL[k]}</option>)}</select></div>
           <div style={{ flex: "2 1 220px" }}><label>Files <span className="muted">(images or PDF, many at once)</span></label><input type="file" name="files" multiple accept="image/*,application/pdf" /></div>
-          <div style={{ flex: "2 1 200px" }}><label>…or link <span className="muted">(YouTube, Matterport)</span></label><input name="link" type="url" placeholder="https://" /></div>
+          <div style={{ flex: "2 1 200px" }}><label>…or link <span className="muted">(Matterport, Kuula, YouTube)</span></label><input name="link" type="url" placeholder="https://" /></div>
           <div style={{ flex: "2 1 180px" }}><label>Caption</label><input name="caption" placeholder="Level 2 — open plan" /></div>
           <button className="btn">Upload</button>
         </form>
@@ -109,7 +111,11 @@ export default async function EditProperty({ params, searchParams }: { params: P
             </div>
           );
         })}
-        {!media.length && <p className="muted" style={{ marginTop: 14 }}>No media yet. Renderings show first on the page and on the listing card.</p>}
+        <p className="small muted" style={{ marginTop: 10 }}>
+          <b>Renderings</b> show first and on the listing card. Add a <b>Today</b> photo from the same angle as the first rendering to turn on the drag-to-compare slider.
+          <b> 3D / 360 Tours</b>: paste a Matterport, Kuula or CloudPano share link.
+        </p>
+        {!media.length && <p className="muted" style={{ marginTop: 14 }}>No media yet.</p>}
       </section>
 
       <form action={deleteProperty} className="card no-print">
