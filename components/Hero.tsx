@@ -24,7 +24,10 @@ export default function Hero({ video, image, headline, subhead, phone, stats }: 
         <div className="eyebrow cine-rise" style={{ ["--d" as string]: "0ms" }}>Bricktown · Oklahoma City</div>
         <h1 className="cine-title">
           {words.map((w, i) => (
-            <span key={i} className="cine-word" style={{ ["--d" as string]: `${120 + i * 110}ms` }}>{w}{" "}</span>
+            <span key={i}>
+              <span className="cine-word" style={{ ["--d" as string]: `${120 + i * 110}ms` }}>{w}</span>
+              {i < words.length - 1 ? " " : ""}
+            </span>
           ))}
         </h1>
         <p className="cine-rise" style={{ ["--d" as string]: `${200 + words.length * 110}ms` }}>{subhead}</p>

@@ -29,9 +29,9 @@ export default function DistrictMap({ pins, height = 460, zoom = 16, onPick, scr
       if (!alive || !el.current || map.current) return;
       const m = L.map(el.current, { scrollWheelZoom: scrollZoom, zoomControl: true, attributionControl: true });
       map.current = m;
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-        maxZoom: 20, subdomains: "abcd",
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(m);
 
       const icon = (label: string) => L.divIcon({ className: "bre-pin", html: `<span><i>${esc(label)}</i></span>`, iconSize: [34, 44], iconAnchor: [17, 42], popupAnchor: [0, -38] });

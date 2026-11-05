@@ -236,6 +236,7 @@ th { font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color:
 .section-head { margin-bottom: 16px; }
 .section-head h2 { margin-top: 4px; }
 .district-map { width: 100%; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); background: #e8e2dc; z-index: 0; }
+.district-map .leaflet-tile-pane { filter: saturate(.45) sepia(.18) contrast(1.04) brightness(1.02); }
 .bre-pin { background: none; border: 0; }
 .bre-pin span { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--brick); border: 3px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,.35); color: #fff; font-weight: 900; font-size: 14px; transition: transform .15s; }
 .bre-pin:hover span { transform: rotate(-45deg) scale(1.12); }
