@@ -28,6 +28,7 @@ export async function submitInquiry(_: InquiryState, form: FormData): Promise<In
     interest,
     message: clip(form.get("message"), 3000) || null,
     source: form.get("source") === "qr" ? "qr" : "web",
+    utm_source: clip(form.get("utm_source"), 32).toLowerCase().replace(/[^a-z0-9_-]/g, "") || null,
   };
   const { error } = await db().from("inquiries").insert(row);
   if (error) { console.error("inquiry", error.message); return { error: "Something went wrong. Please call us." }; }
@@ -39,7 +40,7 @@ export async function submitInquiry(_: InquiryState, form: FormData): Promise<In
     subject: `New ${interest} inquiry — ${label || "Bricktown Real Estate"}${row.source === "qr" ? " (sign scan)" : ""}`,
     text: [
       `Property: ${label || "General"}`,
-      `Interest: ${interest}`, `Source: ${row.source === "qr" ? "QR sign" : "Website"}`, "",
+      `Interest: ${interest}`, `Source: ${row.source === "qr" ? "QR sign" : row.utm_source || "Website"}`, "",
       `Name: ${name}`, `Email: ${email || "-"}`, `Phone: ${phone || "-"}`, `Company: ${row.company || "-"}`, "",
       row.message || "(no message)", "",
       `All inquiries: ${siteUrl()}/admin/inquiries`,

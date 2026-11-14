@@ -4,6 +4,7 @@ import Gallery from "@/components/Gallery";
 import InquiryForm from "@/components/InquiryForm";
 import CompareSlider from "@/components/CompareSlider";
 import DistrictMap from "@/components/DistrictMap";
+import TrackView from "@/components/TrackView";
 import { mediaFor, propertyBySlug } from "@/lib/data";
 import { isAdmin } from "@/lib/auth";
 import { contact, siteUrl, telHref } from "@/lib/site";
@@ -57,8 +58,27 @@ export default async function PropertyPage({ params, searchParams }: Props) {
   if (p.zoning) facts.push(["Zoning", p.zoning]);
   facts.push(["Type", TYPE_LABEL[p.property_type]]);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "RealEstateListing",
+    name: p.name !== p.address ? `${p.name} — ${p.address}` : p.address,
+    description: p.headline || p.description || undefined,
+    url: `${siteUrl()}/p/${p.slug}`,
+    image: images.map((m) => m.url).slice(0, 10),
+    offers: { "@type": "Offer", businessFunction: p.listing_type === "sale" ? "http://purl.org/goodrelations/v1#Sell" : "http://purl.org/goodrelations/v1#LeaseOut", availability: p.status === "available" ? "https://schema.org/InStock" : "https://schema.org/SoldOut" },
+    about: {
+      "@type": p.property_type === "land" || p.property_type === "parking" ? "Place" : "LocalBusiness",
+      name: p.address,
+      address: { "@type": "PostalAddress", streetAddress: p.address, addressLocality: p.city, addressRegion: p.state, postalCode: p.zip || undefined, addressCountry: "US" },
+      ...(p.lat && p.lng ? { geo: { "@type": "GeoCoordinates", latitude: p.lat, longitude: p.lng } } : {}),
+      ...(p.sqft ? { floorSize: { "@type": "QuantitativeValue", value: Number(p.sqft), unitCode: "FTK" } } : {}),
+    },
+  };
+
   return (
     <div className="stack">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
+      <TrackView id={p.id} />
       {!p.published && <div className="notice bad no-print">Draft — only you can see this page. Publish it in the admin.</div>}
       {fromSign && <div className="welcome">Thanks for scanning the sign. Renderings, floor plans and details are below — or call {c.phone} now.</div>}
 

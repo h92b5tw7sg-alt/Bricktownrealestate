@@ -6,7 +6,7 @@ import { markInquiry } from "../actions";
 
 export const dynamic = "force-dynamic";
 
-type Row = { id: string; name: string; email: string | null; phone: string | null; company: string | null; interest: string; message: string | null; source: string; handled: boolean; created_at: string; properties: { address: string; slug: string } | null };
+type Row = { utm_source: string | null; id: string; name: string; email: string | null; phone: string | null; company: string | null; interest: string; message: string | null; source: string; handled: boolean; created_at: string; properties: { address: string; slug: string } | null };
 
 export default async function Inquiries() {
   await requireAdmin();
@@ -26,7 +26,7 @@ export default async function Inquiries() {
             <tbody>
               {rows.map((r) => (
                 <tr key={r.id} style={{ opacity: r.handled ? .55 : 1 }}>
-                  <td className="small" style={{ whiteSpace: "nowrap" }}>{fmt(r.created_at)}{r.source === "qr" && <div><span className="tag soft">Sign scan</span></div>}</td>
+                  <td className="small" style={{ whiteSpace: "nowrap" }}>{fmt(r.created_at)}{r.source === "qr" ? <div><span className="tag soft">Sign scan</span></div> : r.utm_source ? <div><span className="tag soft">{r.utm_source}</span></div> : null}</td>
                   <td>{r.properties ? <Link href={`/p/${r.properties.slug}`} target="_blank">{r.properties.address}</Link> : "—"}</td>
                   <td><b>{r.name}</b>{r.company && <div className="small">{r.company}</div>}
                     {r.phone && <div className="small"><a href={`tel:${r.phone}`}>{r.phone}</a></div>}

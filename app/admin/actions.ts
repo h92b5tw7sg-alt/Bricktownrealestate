@@ -163,3 +163,17 @@ export async function saveSettings(form: FormData) {
   revalidatePath("/");
   redirect("/admin/site?saved=1");
 }
+
+export async function setSyndication(form: FormData) {
+  await requireAdmin();
+  const status = ["todo", "listed", "paused", "na"].includes(s(form.get("status"))) ? s(form.get("status")) : "todo";
+  const url = s(form.get("url"));
+  await db().from("syndication").upsert({
+    property_id: s(form.get("property_id")),
+    platform: s(form.get("platform")).slice(0, 32),
+    status,
+    url: /^https?:\/\//.test(url) ? url : null,
+    updated_at: new Date().toISOString(),
+  });
+  revalidatePath("/admin/marketing");
+}
