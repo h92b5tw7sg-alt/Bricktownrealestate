@@ -6,6 +6,7 @@ export type SiteSettings = {
   hero_headline?: string;
   hero_subhead?: string;
   hero_credit?: string;
+  hero_layout?: string;   // "split" = artwork beside the headline on black; default = full-bleed photo
   hero_credit_url?: string;
 };
 

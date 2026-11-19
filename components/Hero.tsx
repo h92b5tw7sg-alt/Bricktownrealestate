@@ -1,14 +1,16 @@
 import { telHref } from "@/lib/site";
 
 /** Full-bleed cinematic hero: drone video, else a slow Ken Burns photo, else animated brick. */
-export default function Hero({ video, image, headline, subhead, phone, stats, credit, creditUrl }: {
-  video?: string; image?: string; headline: string; subhead: string; phone: string; credit?: string; creditUrl?: string;
+export default function Hero({ video, image, headline, subhead, phone, stats, credit, creditUrl, layout }: {
+  video?: string; image?: string; headline: string; subhead: string; phone: string; credit?: string; creditUrl?: string; layout?: string;
   stats: { n: string; l: string }[];
 }) {
   const words = headline.split(/\s+/);
+  const split = layout === "split" && !!image && !video;
   return (
-    <section className="cine">
-      <div className="cine-media" aria-hidden="true">
+    <section className={`cine${split ? " split" : ""}`}>
+      {split && <img src={image} alt="The Jim Brewer Building on the Bricktown Canal" className="cine-art" />}
+      {!split && <div className="cine-media" aria-hidden="true">
         {video ? (
           <video autoPlay muted loop playsInline preload="metadata" poster={image}>
             <source src={video} />
@@ -19,7 +21,7 @@ export default function Hero({ video, image, headline, subhead, phone, stats, cr
           <div className="cine-brick" />
         )}
         <div className="cine-shade" />
-      </div>
+      </div>}
       <div className="cine-inner">
         <div className="eyebrow cine-rise" style={{ ["--d" as string]: "0ms" }}>Bricktown · Oklahoma City</div>
         <h1 className="cine-title">

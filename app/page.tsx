@@ -47,6 +47,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
         phone={c.phone}
         credit={settings.hero_image_url ? settings.hero_credit : undefined}
         creditUrl={settings.hero_credit_url}
+        layout={settings.hero_layout}
         stats={[
           { n: String(all.length), l: "Available" },
           ...(totalSf > 0 ? [{ n: Math.round(totalSf).toLocaleString(), l: "Square feet" }] : []),
