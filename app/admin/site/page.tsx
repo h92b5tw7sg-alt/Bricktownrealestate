@@ -41,6 +41,10 @@ export default async function SiteSettings({ searchParams }: { searchParams: Pro
           {s.hero_image_url && <label className="check" style={{ marginTop: 10 }}><input type="checkbox" name="hero_image_url_clear" /> Remove photo</label>}
         </div>
 
+        <div className="two">
+          <div><label>Photo credit <span className="muted">(required for Creative Commons photos)</span></label><input name="hero_credit" defaultValue={s.hero_credit ?? ""} placeholder="Photo: Name, CC BY-SA 4.0" /></div>
+          <div><label>Credit link</label><input name="hero_credit_url" type="url" defaultValue={s.hero_credit_url ?? ""} placeholder="https://" /></div>
+        </div>
         <div className="field"><label>Headline</label><input name="hero_headline" defaultValue={s.hero_headline ?? ""} placeholder="Space to build in Bricktown" /></div>
         <div className="field"><label>Subhead</label><textarea name="hero_subhead" rows={3} defaultValue={s.hero_subhead ?? ""} placeholder="Historic brick buildings, restaurant and nightlife space…" /></div>
         <div><button className="btn">Save homepage</button></div>

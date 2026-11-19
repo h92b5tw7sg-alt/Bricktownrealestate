@@ -138,12 +138,12 @@ export async function markInquiry(form: FormData) {
   revalidatePath("/admin/inquiries");
 }
 
-const SETTING_KEYS = ["hero_video_url", "hero_image_url", "hero_headline", "hero_subhead"];
+const SETTING_KEYS = ["hero_video_url", "hero_image_url", "hero_headline", "hero_subhead", "hero_credit", "hero_credit_url"];
 
 export async function saveSettings(form: FormData) {
   await requireAdmin();
   const rows: { key: string; value: string | null; updated_at: string }[] = [];
-  for (const key of ["hero_headline", "hero_subhead"]) rows.push({ key, value: s(form.get(key)) || null, updated_at: new Date().toISOString() });
+  for (const key of ["hero_headline", "hero_subhead", "hero_credit", "hero_credit_url"]) rows.push({ key, value: s(form.get(key)) || null, updated_at: new Date().toISOString() });
   for (const key of ["hero_video_url", "hero_image_url"]) {
     const file = form.get(`${key}_file`);
     const link = s(form.get(key));

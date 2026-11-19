@@ -1,8 +1,8 @@
 import { telHref } from "@/lib/site";
 
 /** Full-bleed cinematic hero: drone video, else a slow Ken Burns photo, else animated brick. */
-export default function Hero({ video, image, headline, subhead, phone, stats }: {
-  video?: string; image?: string; headline: string; subhead: string; phone: string;
+export default function Hero({ video, image, headline, subhead, phone, stats, credit, creditUrl }: {
+  video?: string; image?: string; headline: string; subhead: string; phone: string; credit?: string; creditUrl?: string;
   stats: { n: string; l: string }[];
 }) {
   const words = headline.split(/\s+/);
@@ -40,6 +40,11 @@ export default function Hero({ video, image, headline, subhead, phone, stats }: 
           {stats.map((s) => <div key={s.l}><b>{s.n}</b><span>{s.l}</span></div>)}
         </div>
       </div>
+      {credit && (
+        <div className="cine-credit">
+          {creditUrl ? <a href={creditUrl} target="_blank" rel="noopener">{credit}</a> : credit}
+        </div>
+      )}
       <a href="#listings" className="cine-scroll" aria-label="Scroll to properties"><span /></a>
     </section>
   );

@@ -45,6 +45,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
         headline={settings.hero_headline || "Space to build in Bricktown"}
         subhead={settings.hero_subhead || "Historic brick buildings, restaurant and nightlife space, and development sites in OKC's entertainment district — available for lease or sale, direct from the owner."}
         phone={c.phone}
+        credit={settings.hero_image_url ? settings.hero_credit : undefined}
+        creditUrl={settings.hero_credit_url}
         stats={[
           { n: String(all.length), l: "Available" },
           ...(totalSf > 0 ? [{ n: Math.round(totalSf).toLocaleString(), l: "Square feet" }] : []),

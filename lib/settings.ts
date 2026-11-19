@@ -5,6 +5,8 @@ export type SiteSettings = {
   hero_image_url?: string;
   hero_headline?: string;
   hero_subhead?: string;
+  hero_credit?: string;
+  hero_credit_url?: string;
 };
 
 export async function getSettings(): Promise<SiteSettings> {
