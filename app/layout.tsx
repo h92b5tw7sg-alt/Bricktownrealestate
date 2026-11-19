@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   openGraph: { siteName: BRAND, type: "website" },
 };
 
-export const viewport: Viewport = { themeColor: "#2a2320" };
+export const viewport: Viewport = { themeColor: "#000000" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const c = contact();
@@ -28,10 +28,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <header className="site-header">
           <div className="inner">
             <Link href="/" className="brand" aria-label={`${BRAND} home`}>
-              <span className="brand-mark" aria-hidden="true">B</span>
-              <span className="brand-word">Bricktown <span>Real Estate</span></span>
+              <img src="/brand-logo.webp" alt="Bricktown Real Estate Co." className="brand-logo" width="1095" height="255" />
             </Link>
-            <a className="header-call" href={telHref(c.phone)}>Call {c.phone}</a>
+            <a className="header-call" href={telHref(c.phone)}><span className="hc-label">Call </span>{c.phone}</a>
           </div>
         </header>
         <main id="main" tabIndex={-1} className="wrap">{children}</main>
