@@ -213,19 +213,19 @@ th { font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color:
 .btn.ghost.light:hover { background: rgba(255,255,255,.16); }
 /* Split hero: artwork on black beside the headline (matches the signs) */
 .cine.split { background: #000; align-items: center; min-height: min(86vh, 820px); }
-.cine.split .cine-art { position: absolute; right: max(0px, calc(50vw - 640px)); top: 50%; transform: translateY(-46%); width: min(62vw, 860px); height: auto; z-index: 0; animation: artIn 1.4s cubic-bezier(.2,.7,.2,1) both; filter: drop-shadow(0 30px 60px rgba(255,170,60,.12)); }
+.cine.split .cine-art { position: absolute; right: max(0px, calc(50vw - 640px)); top: 50%; transform: translateY(-46%); width: calc(100% - 600px - 2 * max(0px, 50vw - 640px)); max-width: 820px; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 9%); mask-image: linear-gradient(90deg, transparent 0, #000 9%); height: auto; z-index: 0; animation: artIn 1.4s cubic-bezier(.2,.7,.2,1) both; filter: drop-shadow(0 30px 60px rgba(255,170,60,.12)); }
 .cine.split .cine-inner { position: relative; z-index: 1; padding-top: 110px; padding-bottom: 80px; }
 .cine.split .cine-inner > * { max-width: 520px; }
-.cine.split .cine-title { max-width: 11ch; color: #f6c35c; text-shadow: 0 4px 24px rgba(0,0,0,.9); }
+.cine.split .cine-title { max-width: 11ch; font-size: clamp(44px, 5.4vw, 84px); color: #f6c35c; text-shadow: 0 4px 24px rgba(0,0,0,.9); }
 .cine.split p { text-shadow: 0 2px 12px rgba(0,0,0,.95); }
 .cine.split .eyebrow { color: #e3342f; }
 @keyframes artIn { from { opacity: 0; transform: translateY(-40%) scale(1.04); } to { opacity: 1; transform: translateY(-46%) scale(1); } }
 @supports (animation-timeline: scroll()) {
   .cine.split .cine-art { animation: artIn 1.4s cubic-bezier(.2,.7,.2,1) both; }
 }
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
   .cine.split { flex-direction: column; align-items: stretch; min-height: 0; }
-  .cine.split .cine-art { position: relative; right: auto; top: auto; transform: none; width: 100%; margin-top: 70px; animation: none; }
+  .cine.split .cine-art { position: relative; right: auto; top: auto; transform: none; width: 100%; max-width: none; margin-top: 70px; animation: none; -webkit-mask-image: none; mask-image: none; }
   .cine.split .cine-inner { padding-top: 8px; padding-bottom: 56px; }
 }
 @media (prefers-reduced-motion: reduce) { .cine.split .cine-art { animation: none !important; } }
